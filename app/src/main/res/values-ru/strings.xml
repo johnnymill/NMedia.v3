@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NMedia</string>
+    <string name="hello">Привет, Мир!</string>
+    <string name="description_post_author_avatar">Аватар автора поста</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="description_post_like">Нравится</string>
+    <string name="description_post_share">Поделиться</string>
+    <string name="description_post_save">Сохранить</string>
+    <string name="description_post_attachment">Прикреплённая к посту картинка</string>
+    <string name="description_unread_posts">Новые посты</string>
+    <string name="description_pick_photo">Открыть Галерею</string>
+    <string name="description_take_photo">Открыть Фотоаппарат</string>
+    <string name="menu_edit">Изменить</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="post_text">Текст поста</string>
+    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="new_posts">Новые посты (%1$d)</string>
+    <string name="retry_acting">Повторить</string>
+    <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
+    <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
+    <string name="error_response">Сервер ответил %1$s (%2$d)</string>
+    <string name="save">Сохранить</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="remove_photo">Удалить</string>
+    <string name="hint_new_post">Введите текст</string>
+    <string name="signout">Выйти</string>
+    <string name="signin">Войти</string>
+    <string name="signup">Зарегистрироваться</string>
+    <string name="auth_login">Логин</string>
+    <string name="auth_password">Пароль</string>
+    <string name="auth_empty_credentials">Логин и пароль не могут быть пустыми</string>
+    <string name="auth_signout_confirm">Вы уверены, что хотите выйти?</string>
+    <string name="auth_signout_yes">Да</string>
+    <string name="auth_signout_no">Конечно нет!</string>
+    <string name="auth_name">Имя</string>
+    <string name="auth_passwords_mismatch">Пароли не совпадают</string>
+    <string name="auth_hint_name">Ваше имя</string>
+    <string name="auth_hint_login">логин</string>
+    <string name="auth_hint_password">Введите пароль</string>
+    <string name="auth_hint_password_repeat">Повторите пароль</string>
+</resources>
