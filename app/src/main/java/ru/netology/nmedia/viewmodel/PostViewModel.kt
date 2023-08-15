@@ -1,13 +1,12 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.model.FeedModelActing
@@ -17,6 +16,7 @@ import ru.netology.nmedia.model.FeedResponse
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -30,16 +30,16 @@ private val empty = Post(
     attachment = null
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    // упрощённый вариант
-    private val repository: PostRepository = PostRepositoryImpl(
-        AppDb.getInstance(application).postDao()
-    )
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val repository: PostRepository,
+    appAuth: AppAuth
+) : ViewModel() {
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: LiveData<FeedPosts> = AppAuth.getInstance().authStateFlow.flatMapLatest { (id, _) ->
+    val data: LiveData<FeedPosts> = appAuth.authStateFlow.flatMapLatest { (id, _) ->
         repository.posts
             .map { posts ->
                 posts.map { post -> post.copy(ownedByMe = post.authorId == id) }
