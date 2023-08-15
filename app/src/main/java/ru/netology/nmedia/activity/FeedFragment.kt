@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.ImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -26,11 +27,16 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModelActing
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by viewModels()
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +51,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                if (AppAuth.getInstance().isUserValid()) {
+                if (appAuth.isUserValid()) {
                     viewModel.likeById(post.id)
                 } else {
                     findNavController().navigate(R.id.action_feedFragment_to_authSigninFragment)
@@ -78,7 +84,7 @@ class FeedFragment : Fragment() {
         })
 
         var currentAuthMenuProvider: MenuProvider? = null
-        authViewModel.authLiveData.observe(viewLifecycleOwner) {
+        authViewModel.data.observe(viewLifecycleOwner) {
             currentAuthMenuProvider?.let(requireActivity()::removeMenuProvider)
             requireActivity().addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -166,7 +172,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            if (AppAuth.getInstance().isUserValid()) {
+            if (appAuth.isUserValid()) {
                 findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             } else {
                 findNavController().navigate(R.id.action_feedFragment_to_authSigninFragment)
