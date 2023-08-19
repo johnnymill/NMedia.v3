@@ -1,12 +1,13 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.AuthModel
 import java.io.File
 
 interface PostRepository {
-    val posts: Flow<List<Post>>
+    val data: Flow<PagingData<Post>>
 
     suspend fun getAll()
     fun getNewerCount(): Flow<Int>

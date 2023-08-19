@@ -13,10 +13,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.ImageFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -144,7 +150,7 @@ class FeedFragment : Fragment() {
                 ).setAction(actResId) {
                     when (state.acting) {
                         FeedModelActing.LOADING -> viewModel.loadPosts()
-                        FeedModelActing.REFRESHING -> viewModel.refreshPosts()
+                        FeedModelActing.REFRESHING -> adapter.refresh() // viewModel.refreshPosts()
                         FeedModelActing.REMOVING -> viewModel.removeById(state.postId)
                         FeedModelActing.LIKING -> viewModel.likeById(state.postId)
                         FeedModelActing.IDLE -> return@setAction
@@ -153,22 +159,41 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { data ->
-            adapter.submitList(data.posts)
-            binding.emptyText.isVisible = data.empty
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.data.collectLatest {
+                    adapter.submitData(it)
+                }
+            }
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
-            if (it == 0) {
-                binding.fabNewer.hide()
-            } else {
-                binding.fabNewer.text = getString(R.string.new_posts, it)
-                binding.fabNewer.show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.newerCount.collectLatest {
+                    if (it == 0) {
+                        binding.fabNewer.hide()
+                    } else {
+                        binding.fabNewer.text = getString(R.string.new_posts, it)
+                        binding.fabNewer.show()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                adapter.loadStateFlow.collectLatest {
+                    binding.swiperefresh.isRefreshing =
+                        it.refresh is LoadState.Loading
+                                || it.append is LoadState.Loading
+                                || it.prepend is LoadState.Loading
+                }
             }
         }
 
         binding.swiperefresh.setOnRefreshListener {
-            viewModel.refreshPosts()
+//            viewModel.refreshPosts()
+            adapter.refresh()
         }
 
         binding.fab.setOnClickListener {
@@ -181,6 +206,7 @@ class FeedFragment : Fragment() {
 
         binding.fabNewer.setOnClickListener {
             viewModel.loadNewPosts()
+            adapter.refresh()  // TODO smoothScrollToPosition теперь не актуален. Как исправить, чтобы было как раньше?
             binding.fabNewer.hide()
         }
 
@@ -191,6 +217,10 @@ class FeedFragment : Fragment() {
                 }
             }
         })
+
+        authViewModel.data.observe(viewLifecycleOwner) {
+            adapter.refresh()
+        }
 
         return binding.root
     }
