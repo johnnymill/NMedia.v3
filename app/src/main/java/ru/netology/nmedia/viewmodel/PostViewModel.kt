@@ -1,6 +1,8 @@
 package ru.netology.nmedia.viewmodel
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,7 +13,6 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.model.FeedModelActing
 import ru.netology.nmedia.model.FeedModelState
-import ru.netology.nmedia.model.FeedPosts
 import ru.netology.nmedia.model.FeedResponse
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.*
@@ -38,14 +39,15 @@ class PostViewModel @Inject constructor(
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: LiveData<FeedPosts> = appAuth.authStateFlow.flatMapLatest { (id, _) ->
-        repository.posts
-            .map { posts ->
-                posts.map { post -> post.copy(ownedByMe = post.authorId == id) }
-            }
-            .map(::FeedPosts)
-    }.asLiveData(Dispatchers.Default)
+    val data: Flow<PagingData<Post>> = appAuth.authStateFlow
+        .flatMapLatest { (id, _) ->
+            repository.data
+                .map { posts ->
+                    posts.map { post -> post.copy(ownedByMe = post.authorId == id) }
+                }
+        }.flowOn(Dispatchers.Default)
     private val _photoState = MutableLiveData<PhotoModel?>()
     val photoState: LiveData<PhotoModel?>
         get() = _photoState
@@ -53,9 +55,11 @@ class PostViewModel @Inject constructor(
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
-    val newerCount: LiveData<Int> = data.switchMap {
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val newerCount: Flow<Int> = data.flatMapLatest {
         repository.getNewerCount()
-            .asLiveData(Dispatchers.Default)
+            .flowOn(Dispatchers.Default)
     }
 
     init {
