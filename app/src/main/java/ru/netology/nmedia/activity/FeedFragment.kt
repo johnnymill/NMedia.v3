@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -169,19 +168,6 @@ class FeedFragment : Fragment() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.newerCount.collectLatest {
-                    if (it == 0) {
-                        binding.fabNewer.hide()
-                    } else {
-                        binding.fabNewer.text = getString(R.string.new_posts, it)
-                        binding.fabNewer.show()
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 adapter.loadStateFlow.collectLatest {
                     binding.swiperefresh.isRefreshing =
                         it.refresh is LoadState.Loading
@@ -203,20 +189,6 @@ class FeedFragment : Fragment() {
                 findNavController().navigate(R.id.action_feedFragment_to_authSigninFragment)
             }
         }
-
-        binding.fabNewer.setOnClickListener {
-            viewModel.loadNewPosts()
-            adapter.refresh()  // TODO smoothScrollToPosition теперь не актуален. Как исправить, чтобы было как раньше?
-            binding.fabNewer.hide()
-        }
-
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
-        })
 
         authViewModel.data.observe(viewLifecycleOwner) {
             adapter.refresh()

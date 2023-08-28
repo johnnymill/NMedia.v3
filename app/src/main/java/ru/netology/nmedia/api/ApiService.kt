@@ -28,9 +28,6 @@ interface ApiService {
 //    @GET("posts/{id}")
 //    suspend fun getById(@Path("id") id: Long): Response<Post>
 
-    @GET("posts/{id}/newer")
-    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
-
     @DELETE("posts/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>
 

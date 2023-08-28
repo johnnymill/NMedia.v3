@@ -56,12 +56,6 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val newerCount: Flow<Int> = data.flatMapLatest {
-        repository.getNewerCount()
-            .flowOn(Dispatchers.Default)
-    }
-
     init {
         loadPosts()
     }
@@ -86,10 +80,6 @@ class PostViewModel @Inject constructor(
 
     fun refreshPosts() {
         reload(false)
-    }
-
-    fun loadNewPosts() = viewModelScope.launch {
-        repository.showNewer()
     }
 
     fun save() {
