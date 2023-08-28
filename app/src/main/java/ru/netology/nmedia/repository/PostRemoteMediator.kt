@@ -13,6 +13,7 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.PostRemoteKeyEntity
 import ru.netology.nmedia.error.ApiError
+import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
@@ -33,8 +34,7 @@ class PostRemoteMediator(
                 }
 
                 LoadType.PREPEND -> {
-                    val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
-                    apiService.getAfter(id = id, count = state.config.pageSize)
+                    return MediatorResult.Success(true)
                 }
 
                 LoadType.APPEND -> {
@@ -69,15 +69,6 @@ class PostRemoteMediator(
                         )
                     }
 
-                    LoadType.PREPEND -> {
-                        postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(
-                                PostRemoteKeyEntity.KeyType.AFTER,
-                                body.first().id,
-                            )
-                        )
-                    }
-
                     LoadType.APPEND -> {
                         postRemoteKeyDao.insert(
                             PostRemoteKeyEntity(
@@ -86,6 +77,8 @@ class PostRemoteMediator(
                             )
                         )
                     }
+
+                    else -> throw UnknownError
                 }
 
                 postDao.insert(body.map(PostEntity::fromDto))
