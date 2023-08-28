@@ -19,7 +19,6 @@ data class PostEntity(
     val likes: Int = 0,
     @Embedded
     val attachment: Attachment? = null,
-    val hidden: Boolean = false
 ) {
     fun toDto() =
         Post(

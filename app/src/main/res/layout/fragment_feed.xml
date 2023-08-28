@@ -55,16 +55,4 @@
         android:clickable="true"
         android:contentDescription="@string/add_post"
         app:srcCompat="@drawable/ic_add_24dp" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabNewer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        android:visibility="gone"
-        android:contentDescription="@string/description_unread_posts"
-        app:icon="@drawable/ic_arrow_upward_24"
-        android:text="@string/new_posts"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

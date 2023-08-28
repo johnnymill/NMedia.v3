@@ -7,7 +7,6 @@
     <string name="description_post_share">Share</string>
     <string name="description_post_save">Save</string>
     <string name="description_post_attachment">Post attachment</string>
-    <string name="description_unread_posts">New posts</string>
     <string name="description_pick_photo">Open Gallery</string>
     <string name="description_take_photo">Open Camera</string>
     <string name="menu_remove">Remove</string>
@@ -16,7 +15,6 @@
     <string name="error_empty_content">Content can\'t be empty</string>
     <string name="chooser_share_post">Share post</string>
     <string name="add_post">Add post</string>
-    <string name="new_posts">New posts (%1$d)</string>
     <string name="retry_acting">Retry</string>
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="error_loading">Something went wrong. Try again later</string>
