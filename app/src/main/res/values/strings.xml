@@ -9,6 +9,7 @@
     <string name="description_post_attachment">Post attachment</string>
     <string name="description_pick_photo">Open Gallery</string>
     <string name="description_take_photo">Open Camera</string>
+    <string name="description_advertisement">Advertisement content</string>
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post Text</string>
     <string name="menu_edit">Edit</string>

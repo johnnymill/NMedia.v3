@@ -9,6 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.model.FeedModelActing
@@ -41,11 +42,17 @@ class PostViewModel @Inject constructor(
         get() = _state
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: Flow<PagingData<Post>> = appAuth.authStateFlow
+    val data: Flow<PagingData<FeedItem>> = appAuth.authStateFlow
         .flatMapLatest { (id, _) ->
             repository.data
                 .map { posts ->
-                    posts.map { post -> post.copy(ownedByMe = post.authorId == id) }
+                    posts.map { post ->
+                        if (post is Post) {
+                            post.copy(ownedByMe = post.authorId == id)
+                        } else {
+                            post
+                        }
+                    }
                 }
         }.flowOn(Dispatchers.Default)
     private val _photoState = MutableLiveData<PhotoModel?>()
