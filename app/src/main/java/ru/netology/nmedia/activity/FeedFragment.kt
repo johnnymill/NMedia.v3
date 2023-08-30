@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.MenuProvider
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -125,9 +124,6 @@ class FeedFragment : Fragment() {
 
         binding.list.adapter = adapter
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.acting == FeedModelActing.LOADING
-            binding.swiperefresh.isRefreshing = state.acting == FeedModelActing.REFRESHING
-
             if (state.error) {
                 val message = if (state.response.code == 0) {
                     getString(R.string.error_loading)
@@ -148,8 +144,6 @@ class FeedFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 ).setAction(actResId) {
                     when (state.acting) {
-                        FeedModelActing.LOADING -> viewModel.loadPosts()
-                        FeedModelActing.REFRESHING -> adapter.refresh() // viewModel.refreshPosts()
                         FeedModelActing.REMOVING -> viewModel.removeById(state.postId)
                         FeedModelActing.LIKING -> viewModel.likeById(state.postId)
                         FeedModelActing.IDLE -> return@setAction
@@ -178,7 +172,6 @@ class FeedFragment : Fragment() {
         }
 
         binding.swiperefresh.setOnRefreshListener {
-//            viewModel.refreshPosts()
             adapter.refresh()
         }
 

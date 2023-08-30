@@ -13,9 +13,6 @@ interface ApiService {
     @POST("posts")
     suspend fun save(@Body post: Post): Response<Post>
 
-    @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
-
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
 
