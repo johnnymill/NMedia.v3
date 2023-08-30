@@ -25,9 +25,6 @@ interface ApiService {
     @GET("posts/{id}/after")
     suspend fun getAfter(@Path("id") id: Long, @Query("count") count: Int): Response<List<Post>>
 
-//    @GET("posts/{id}")
-//    suspend fun getById(@Path("id") id: Long): Response<Post>
-
     @DELETE("posts/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>
 
