@@ -49,22 +49,6 @@ class PostRepositoryImpl @Inject constructor(
     ).flow
         .map { it.map(PostEntity::toDto) }
 
-//    private fun getById(id: Long, callback: PostRepository.ResponseCallback<Post>) {
-//        ApiPosts.retrofitService.getById(id).enqueue(object : Callback<Post> {
-//            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-//                if (!response.isSuccessful) {
-//                    callback.onError(response.code(), response.message())
-//                } else {
-//                    callback.onSuccess(requireNotNull(response.body()) { "body is null" })
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Post>, t: Throwable) {
-//                callback.onFailure(Exception(t))
-//            }
-//        })
-//    }
-
     override suspend fun getAll() {
         try {
             val response = apiService.getAll()
