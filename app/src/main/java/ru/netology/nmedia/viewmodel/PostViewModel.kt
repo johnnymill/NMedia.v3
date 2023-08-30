@@ -56,32 +56,6 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    init {
-        loadPosts()
-    }
-
-    private fun reload(isInitial: Boolean) = viewModelScope.launch {
-        val acting = if (isInitial) FeedModelActing.LOADING else FeedModelActing.REFRESHING
-        try {
-            _state.value = FeedModelState(acting = acting)
-            repository.getAll()
-            _state.postValue(FeedModelState())
-        } catch (e: Exception) {
-            val resp = if (e is ApiError) FeedResponse(e.status, e.code) else FeedResponse()
-            _state.postValue(
-                FeedModelState(acting = acting, error = true, response = resp)
-            )
-        }
-    }
-
-    fun loadPosts() {
-        reload(true)
-    }
-
-    fun refreshPosts() {
-        reload(false)
-    }
-
     fun save() {
         edited.value?.let { post ->
             _postCreated.value = Unit

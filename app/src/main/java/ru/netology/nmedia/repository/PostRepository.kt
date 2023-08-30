@@ -9,7 +9,6 @@ import java.io.File
 interface PostRepository {
     val data: Flow<PagingData<Post>>
 
-    suspend fun getAll()
     suspend fun save(post: Post)
     suspend fun saveWithAttachment(file: File, post: Post)
     suspend fun removeById(id: Long)
