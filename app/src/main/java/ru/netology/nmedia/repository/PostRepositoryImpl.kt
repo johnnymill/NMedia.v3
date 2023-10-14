@@ -22,13 +22,16 @@ import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.TimingSeparator
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.AuthModel
+import ru.netology.nmedia.util.DateUtils
 import java.io.File
 import java.io.IOException
+import java.util.Calendar
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -52,9 +55,18 @@ class PostRepositoryImpl @Inject constructor(
     ).flow
         .map {
             it.map(PostEntity::toDto)
-                .insertSeparators { previous, _ ->
-                    if (previous?.id?.rem(5) == 0L) {
-                        Ad(Random.nextLong(), "figma.jpg")
+                .insertSeparators { previous, next ->
+                    if (next != null) {
+                        val current = Calendar.getInstance().timeInMillis / 1000
+                        val nextAgo = DateUtils.ago(current - next.published)
+                        val previousAgo = if (previous != null) DateUtils.ago(current - previous.published) else ""
+                        if (nextAgo != previousAgo) {
+                            TimingSeparator(Random.nextLong(), next.published, nextAgo)
+                        } else if (previous?.id?.rem(5) == 0L) {
+                            Ad(Random.nextLong(), previous.published, "figma.jpg")
+                        } else {
+                            null
+                        }
                     } else {
                         null
                     }
