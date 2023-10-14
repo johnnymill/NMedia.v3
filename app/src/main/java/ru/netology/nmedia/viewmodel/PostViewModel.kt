@@ -28,7 +28,7 @@ private val empty = Post(
     authorId = 0,
     likedByMe = false,
     likes = 0,
-    published = "",
+    published = 0L,
     attachment = null
 )
 

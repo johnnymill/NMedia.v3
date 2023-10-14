@@ -13,10 +13,14 @@ import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.CardTimingSeparatorBinding
 import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.TimingSeparator
+import java.text.DateFormat
+import java.util.Date
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -31,6 +35,7 @@ class PostsAdapter(
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
+            is TimingSeparator -> R.layout.card_timing_separator
             is Ad -> R.layout.card_ad
             is Post -> R.layout.card_post
             null -> error("Unknown item type")
@@ -38,6 +43,10 @@ class PostsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
+            R.layout.card_timing_separator -> {
+                val binding = CardTimingSeparatorBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                TimingSeparatorViewHolder(binding)
+            }
             R.layout.card_ad -> {
                 val binding = CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 AdViewHolder(binding)
@@ -51,10 +60,20 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
+            is TimingSeparator -> (holder as? TimingSeparatorViewHolder)?.bind(item)
             is Ad -> (holder as? AdViewHolder)?.bind(item)
             is Post -> (holder as? PostViewHolder)?.bind(item)
             null -> error("Unknown item type")
         }
+    }
+}
+
+class TimingSeparatorViewHolder(
+    private val binding: CardTimingSeparatorBinding
+) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(timingSeparator: TimingSeparator) {
+        binding.timingSeparator.text = timingSeparator.text
     }
 }
 
@@ -100,7 +119,7 @@ class PostViewHolder(
 
         binding.apply {
             author.text = post.author
-            published.text = post.published
+            published.text = DateFormat.getDateTimeInstance().format(Date(post.published * 1000))
             content.text = post.content
             // в адаптере
             like.isChecked = post.likedByMe
