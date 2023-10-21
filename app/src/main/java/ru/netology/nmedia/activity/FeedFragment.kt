@@ -174,6 +174,20 @@ class FeedFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collect {
+                    (it.refresh as? LoadState.Error)?.also {
+                        Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.retry_acting) {
+                                adapter.retry()
+                            }
+                            .show()
+                    }
+                }
+            }
+        }
+
         binding.swiperefresh.setOnRefreshListener {
             adapter.refresh()
         }
